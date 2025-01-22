@@ -1,0 +1,273 @@
+﻿@model MonkeysTheoremWeb.Models.GeneticAlgorithmViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="col-md-6 p-0">
+    <div id="datos" class="mt-5" style="position: absolute; z-index:1; width:100px">
+    </div>
+    <div class="card" id="divGeneral">
+        <div class="login-box">
+            <div class="login-snip">
+                <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">Enter Phrase</label>
+                <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">Configuration</label>
+                <div class="login-space">
+                    <div class="login">
+                        <br />
+                        <div class="group">
+                            <label class="label">Frase a reconstruir</label>
+                            <input asp-for="Phrase" type="text" class="input" value="@Model.Phrase" placeholder="Enter a phrase to play" maxlength="60">
+                        </div>
+                        <div class="group">
+                            <ul style="display: inline-block;text-align: left; background: rgba(255, 255, 255, .1);background-color: rgba(255, 255, 255, .1);border-radius: 10px;color: #aaab;">
+                                <li style="margin:10px"><label id="lblHome_Population">Population: @Model.Population</label></li>
+                                <li style="margin:10px"><label id="lblHome_Generations">Generations: @Model.Generations</label></li>
+                                <li style="margin:10px"><label id="lblHome_SolverSelection">Solver: @Model.SolverSelectionName</label></li>
+                                <li style="margin:10px"><label id="lblHome_CrossoverProbability">Crossover Probability: @Model.CrossoverProbability</label></li>
+                                <li style="margin:10px"><label id="lblHome_MutationProbability">Mutation Probability: @Model.MutationProbability</label></li>
+                            </ul>
+                        </div>
+                        <div class="group">
+                            <input id="btnReconstruirFrase" type="button" class="button" value="Reconstruct">
+                        </div>
+                        <div class="group">
+                            <input id="btnVerGrafico" type="button" class="button" value="View Fitness Chart" style="display:none;" />
+                        </div>
+                        <div class="hr"></div>
+                        <div class="group">
+                            <label for="phrase" class="label">Reconstructed Phrase</label>
+                            <select id="results" type="text" class="select">
+                                @if (Model.Phrase != null)
+                                {
+                                    for (int i = Model.Result.Count(); i != 0; i--)
+                                    {
+                                        var elem = Model.Result[i - 1];
+                                        <option value="0">@string.Format("Phrase: {0} - Generations: {1} - Fitness: {2}", elem.PhraseResult, elem.Generation, elem.Fitness)</option>
+                                    }
+                                }
+                                else
+                                {
+                                    <option value="0" selected>Here you will find your sentence</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="sign-up-form">
+                        <br /><br />
+                        <form>
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="group">
+                                <label asp-for="PhraseConfiguration" class="label">Phrase to rebuild</label>
+                                <input asp-for="PhraseConfiguration" type="text" class="input" placeholder="Enter a phrase to play">
+                                <span asp-validation-for="PhraseConfiguration" class="text-danger"></span>
+                            </div>
+                            <br />
+                            <div class="group">
+                                <div class="group" style="display:inline-block; margin-left:20px">
+                                    <label asp-validation-for="Population" class="label chico">Population</label>
+                                    <input asp-for="Population" value="200" type="text" class="input chico" placeholder="Enter Population">
+                                    <span asp-validation-for="Population" class="text-danger"></span>
+                                </div>
+                                <div class="group" style="display:inline-block; margin-left:20px">
+                                    <label asp-for="Generations" class="label chico">Generations to be generated</label>
+                                    <input asp-for="Generations" value="200" type="text" class="input chico" placeholder="Enter the maximum Generations to generate">
+                                    <span asp-validation-for="Generations" class="text-danger"></span>
+                                </div>
+                                <div class="group" style="display:inline-block; margin-left:20px">
+                                    <label asp-for="SolverSelection" class="label chico">Solver selection</label>
+                                    <select asp-for="SolverSelection" type="text" class="select chico" placeholder="Solver selection">
+                                        <option value="0" selected>Ranking</option>
+                                        <option value="1">Torneo</option>
+                                        <option value="2">Ruleta</option>
+                                        <option value="3">Control sobre número esperado</option>
+                                    </select>
+                                    <span asp-validation-for="SolverSelection" class="text-danger"></span>
+                                </div>
+                                <div class="group" style="display:inline-block; margin-left:20px">
+                                    <label asp-for="CrossoverProbability" class="label chico">Probability of crossover</label>
+                                    <input asp-for="CrossoverProbability" value="@Model.CrossoverProbability" type="text" class="input chico" placeholder="Probability of crossover">
+                                    <span asp-validation-for="CrossoverProbability" class="text-danger"></span>
+                                </div>
+                                <div class="group" style="display:inline-block; margin-left:20px">
+                                    <label asp-for="MutationProbability" class="label chico">Mutation Probability</label>
+                                    <input asp-for="MutationProbability" value="@Model.MutationProbability" type="text" class="input chico" placeholder="Mutation probability">
+                                    <span asp-validation-for="MutationProbability" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="group">
+                                <input id="btnReconstruirConfiguracion" type="button" class="button" value="Reconstruct" maxlength="60">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal_grafico" class="modal fade">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Fitness Function Behavior</h4>
+            </div>
+            <div class="modal-body">
+                <canvas id="chart_grafico"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var datos_grafico = [];
+    var generaciones_grafico = [];
+    var myChart = null;
+
+    $("#btnReconstruirFrase").click(function (e) {
+        calculate(e.target);
+    });
+
+    $("#btnReconstruirConfiguracion").click(function (e) {
+        calculate(e.target);
+    });
+
+    $("#btnVerGrafico").click(function () {
+        var config = {
+            type: 'line',
+            data: {
+                labels: generaciones_grafico,
+                datasets: [{
+                    label: 'Función Fitness',
+                    borderColor: 'rgb(75, 192, 192)',
+                    borderWidth: 1,
+                    data: datos_grafico,
+                    fill: true,
+                    tension: 0.1
+                }]
+            }
+        };
+        if (myChart != null) {
+            myChart.destroy();
+        }
+
+        myChart = new Chart($('#chart_grafico'), config);
+        $("#modal_grafico").modal('show');
+    });
+
+    $("#Phrase").change(function (e) {
+        $("#PhraseConfiguration").val($("#Phrase").val());
+    });
+
+    $("#PhraseConfiguration").change(function (e) {
+        $("#Phrase").val($("#PhraseConfiguration").val());
+    });
+
+    $("#Population").change(function (e) {
+        $("#lblHome_Population").text("Población: " + $("#Population").val());
+    });
+
+    $("#CrossoverProbability").change(function (e) {
+        $("#lblHome_CrossoverProbability").text("Probabilidad de Cruzamiento: " + $("#CrossoverProbability").val());
+    });
+
+    $("#Generations").change(function (e) {
+        $("#lblHome_Generations").text("Generaciones: " + $("#Generations").val());
+    });
+
+    $("#MutationProbability").change(function (e) {
+        $("#lblHome_MutationProbability").text("Probabilidad de mutación: " + $("#MutationProbability").val());
+    });
+    $("#SolverSelection").change(function (e) {
+        $("#lblHome_SolverSelection").text("Selección de solucionador: " + $("#SolverSelection option:selected").text());
+    });
+
+    function calculate(selector) {
+
+        var data = {
+            'Phrase': $("#Phrase").val(),
+            'Population': $("#Population").val(),
+            'Generations': $("#Generations").val(),
+            'CrossoverProbability': $("#CrossoverProbability").val(),
+            'MutationProbability': $("#MutationProbability").val(),
+            'SolverSelection': $("#SolverSelection").val(),
+        };
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Calculate", "Home")',
+            data: data,
+            beforeSend: function () {
+                $('#datos').html("<img src='img/spinnerMonkey.gif'>"); // Muestro el Spinner (Animación)
+                $('#divGeneral').css('filter', 'blur(4px)');
+            },
+            success: function (data) {
+                if (data.codigo == 0) {
+                    $('#datos').html(""); // Muestro el Spinner (Animación)
+                    $('#divGeneral').css('filter', '');
+                    var options = "";
+                    datos_grafico = [];
+                    generaciones_grafico = [];
+                    $.each(data.resultados, function (i, item) {
+                        datos_grafico.push(item.fitness);
+                        generaciones_grafico.push(item.generation);
+                    });
+
+                    $("#btnVerGrafico").show();
+
+                    data.resultados = data.resultados.reverse();
+                    $("#results").empty();
+                    $.each(data.resultados, function (i, item) {
+                        var stringOption = `Frase: ${item.phraseResult} - Generaciones: ${item.generation} - Fitness: ${item.fitness}`;
+                        $('#results').append($('<option>', {
+                            value: i,
+                            text: stringOption
+                        }));
+                    });
+
+                    if (selector.id == "btnReconstruirConfiguracion") {
+                        $("#tab-1").click();
+                    }
+                }
+                else {
+                    var errores = "";
+                    $('#datos').html(""); // Muestro el Spinner (Animación)
+                    $('#divGeneral').css('filter', '');
+                    $.each(data.resultados, function (i, err) {
+                        errores += err + "\n";
+                    });
+                    $.notify.addStyle('monkey', {
+                        html: "<div>🐒<span data-notify-text/></div>",
+                        classes: {
+                            base: {
+                                "white-space": "nowrap",
+                                "color": "green",
+                                "border- radius": "10px",
+                                "background": "rgba(50, 50, 50, .1)",
+                                "background-color": "rgba(50, 50, 50, .1)",
+                                "padding": "15px"
+                            },
+                            superblue: {
+                                "color": "green",
+                                "border-radius": "10px",
+                                "background": "rgba(50, 50 50, .1)",
+                                "background-color": "rgba(50, 50, 50, .1)",
+                                "padding": "25px"
+                            }
+                        }
+                    });
+                    $.notify(errores,
+                        {
+                            position: 'top-center',
+                            style: 'monkey'
+                        });
+                    if (selector == "btnReconstruirFrase") {
+                        $("#tab-2").click();
+                    }
+                }
+            },
+        });
+    }
+
+</script>
