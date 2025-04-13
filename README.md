@@ -1,5 +1,5 @@
-# Teorema del mono infinito
-## Algoritmos Genéticos
+# Infinite monkey theorem
+## Genetic Algorithms
 
 A web app, created in .NET with Blazor to represent The infinite monkey theorem, using a Generic Algorithm (A.I.) to reconstruct a sentence, similar to how subtitles on the fly work, in which the "monkeys" work to reconstruct the sentence.
 
