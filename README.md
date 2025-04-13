@@ -1,18 +1,13 @@
 # Teorema del mono infinito
-## Algoritmos Genéticos - Grupo 3 - TP 2 - IA 1C 2021
+## Algoritmos Genéticos
+
+A web app, created in .NET with Blazor to represent The infinite monkey theorem, using a Generic Algorithm (A.I.) to reconstruct a sentence, similar to how subtitles on the fly work, in which the "monkeys" work to reconstruct the sentence.
 
 ![monos simpsons](https://ep01.epimg.net/elpais/imagenes/2015/04/30/ciencia/1430420317_959498_1430423238_sumario_normal.jpg)
 
-El *teorema del mono infinito* afirma que un mono pulsando teclas al azar sobre un teclado durante un periodo de tiempo infinito casi seguramente podrá escribir finalmente cualquier texto dado. En el mundo angloparlante se suele utilizar el Hamlet de Shakespeare como ejemplo, mientras en el mundo hispanohablante se utiliza el Quijote de Cervantes.
+The *infinite monkey theorem* states that a monkey pressing random keys on a keyboard for an infinite period of time will almost certainly be able to eventually type any given text. In the English-speaking world Shakespeare's Hamlet is often used as an example, while in the Spanish-speaking world Cervantes' Don Quixote is used.
 
-Pero si en lugar de tomar un tiempo infinito, nosotros aplicamos *algoritmos genéticos* al comportamiento de estos monos, podríamos reducir ese tiempo?
+But if instead of taking an infinite time, we apply *genetic algorithms* to the behavior of these monkeys, we could reduce that time?
 
-Para lograrlo, necesitamos una frase a reproducir por nuestros monos, y luego un grupo de N monos, cada uno creando una frase aleatoria de caracteres y símbolos.
-Para saber si nuestros monos se acercan a la frase, vamos a tomar como función de aptitud la proporción de caracteres que coinciden con la frase. De esa manera vamos a ir seleccionando según diferentes mecanismos a las siguientes generaciones de monos.
-
-Como frase vamos a utilizar una muy conocida del quijote:
-
-![Don Quijote frase](https://1.bp.blogspot.com/-zlyoueJg7fI/WrFYST9PcxI/AAAAAAAAEUo/hKIWvI4imJsS4gkZBlOYzjWI1fUkvIw3wCLcBGAs/s400/Vi%25C3%25B1eta%2Bfrase.jpg)
-
----
-Fuente: https://es.wikipedia.org/wiki/Teorema_del_mono_infinito
+To achieve this, we need a sentence to be reproduced by our monkeys, and then a group of N monkeys, each creating a random sentence of characters and symbols.
+To know if our monkeys are close to the phrase, we will take as a fitness function the proportion of characters that match the phrase. In this way we will select the next generations of monkeys according to different mechanisms.
